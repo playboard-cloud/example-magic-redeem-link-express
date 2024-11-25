@@ -53,6 +53,12 @@ npm run start
     - `/events/:eventId/watch` สำหรับลิงก์เข้าชม ที่ผู้ใช้กดได้โดยตรงด้วยแท็ก `<a>` เมื่อเข้าแล้วผู้ใช้จะถูก redirect ไปตาม Magic redeem link ที่ถูกสร้างขึ้น (ตามรูปแบบที่ 2)
     - `/api/events/:eventId/actions/create-watch-link` เป็น API สำหรับสร้าง Magic redeem link และส่งให้กับ Frontend ทาง API จากนั้นให้ทาง Frontend ทำการ Redirect เอง (ตามรูปแบบที่ 2)
 
+สำหรับโค้ดข้างต้นจะมีการใช้ไลบรารีภายนอก ชื่อ `fast-jwt` ซึ่งท่านต้องติดตั้งในโปรเจกต์ของท่านเอง ด้วยคำสั่ง
+
+```
+npm install --save fast-jwt
+```
+
 เมื่อนำโค้ดทั้งสองส่วนไปประกอบในแอปพลิเคชันของท่านแล้ว พิจารณาแก้ไข Option ตามด้านล่าง
 
 ## Option ที่ใช้ในการสร้าง Magic redeem link
