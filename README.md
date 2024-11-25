@@ -34,12 +34,12 @@ npm run start
 
 ทั้งนี้สำหรับการนำไปแสดงผลบนเว็บไซต์ของท่าน ทำได้ 2 ทาง
 
-### ทำเป็นลิงก์ให้ผู้ใช้กดแล้วรับชมได้ทันที
+### รูปแบบที่ 1: ทำเป็นลิงก์ให้ผู้ใช้กดแล้วรับชมได้ทันที
 
 วิธีนี้ ผู้ใช้จะเรียกหน้าพิเศษ บนเว็บไซต์ของท่าน (ซึ่งหน้านี้จะต้องทำงานบน Server side) จากนั้นฝั่งเซิฟเวอร์จะสร้าง Magic redeem link
 ระบุข้อมูลผู้ใช้และคอนเทนต์ที่จะได้ดู สำหรับผู้ใช้ท่านนั้น แล้ว Redirect user ไปที่ลิงก์ดังกล่าวทันที โดยการ response ด้วย HTTP status code 307
 
-### ทำเป็นปุ่มขอลิงก์ผ่าน API
+### รูปแบบที่ 2: ทำเป็นปุ่มขอลิงก์ผ่าน API
 
 วิธีนี้ ผู้ใช้จะกดปุ่ม เพื่อเรียก HTTP API (โดยส่วน UI อยู่บน Frontend) จากนั้นฝั API จะสร้าง Magic redeem link ระบุข้อมูลผู้ใช้และคอนเทนต์ที่จะได้ดู
 สำหรับผู้ใช้ท่านนั้น แล้ว Response URL กลับมาที่ Frontend เพื่อให้ Frontend จัดการต่อไป
@@ -48,16 +48,17 @@ npm run start
 
 โค้ดในส่วนที่เกี่ยวข้องจะประกอบไปด้วย:
 
-- `routes/lib/playboard-integration.js` สามารถคัดลอกไปใช้ได้เลย
-- `routes/index.js` จะมี route ที่เกี่ยวข้องที่ให้เลือกเอาไปใช้ อย่างใดอย่างหนึ่ง (และต้องแก้ไขข้อมูลตามการใช้งานจริง) คือ
-    - `/events/:eventId/watch` สำหรับลิงก์เข้าชม ที่ผู้ใช้กดได้โดยตรงด้วยแท็ก `<a>` เมื่อเข้าแล้วผู้ใช้จะถูก redirect ไปตาม Magic redeem link ที่ถูกสร้างขึ้น
-    - `/api/events/:eventId/actions/create-watch-link` สำหรับสร้าง Magic redeem link และส่งให้กับ Frontend ทาง API จากนั้นให้ทาง Frontend ทำการ Redirect เอง
+- [`routes/lib/playboard-integration.js`](https://github.com/playboard-cloud/example-magic-redeem-link-express/blob/main/routes/lib/playboard-integration.js) สามารถคัดลอกไปใช้ได้เลย
+- [`routes/index.js`](https://github.com/playboard-cloud/example-magic-redeem-link-express/blob/main/routes/index.js) จะมี route ที่เกี่ยวข้องที่ให้เลือกเอาไปใช้ อย่างใดอย่างหนึ่ง (และต้องแก้ไขข้อมูลตามการใช้งานจริง) คือ
+    - `/events/:eventId/watch` สำหรับลิงก์เข้าชม ที่ผู้ใช้กดได้โดยตรงด้วยแท็ก `<a>` เมื่อเข้าแล้วผู้ใช้จะถูก redirect ไปตาม Magic redeem link ที่ถูกสร้างขึ้น (ตามรูปแบบที่ 2)
+    - `/api/events/:eventId/actions/create-watch-link` เป็น API สำหรับสร้าง Magic redeem link และส่งให้กับ Frontend ทาง API จากนั้นให้ทาง Frontend ทำการ Redirect เอง (ตามรูปแบบที่ 2)
 
 เมื่อนำโค้ดทั้งสองส่วนไปประกอบในแอปพลิเคชันของท่านแล้ว พิจารณาแก้ไข Option ตามด้านล่าง
 
 ## Option ที่ใช้ในการสร้าง Magic redeem link
 
-ใน API ทั้งสองตัว จะมีการเรียกใช้ฟังก์ชันซึ่งมีออปชันต่อไปนี้ ซึ่งต้องแก้ไขให้เข้ากับแอปพลิเคชันของท่าน
+ใน API ทั้งสองตัว จะมีการเรียกใช้ฟังก์ชัน `ensureUserAuthorizedAndMakeMagicRedeemLinkParams` เพื่อตรวจสอบการซื้อ และต้อง return object
+ที่เป็นพารามิเตอร์สำหรับสร้าง Magic redeem link ดังต่อไปนี้ (ซึ่งต้องแก้ไขให้เข้ากับแอปพลิเคชันของท่าน)
 
 - `userRefCode` ระบุ User ID ของผู้ใช้ ใน service ของท่านเอง ที่จะได้รับชม
 - `userDisplayName` ระบุ Display Name ของผู้ใช้ ใน service ของท่านเอง ที่จะได้รับชม
@@ -80,4 +81,4 @@ npm run start
 ## Production checklist
 
 - สร้าง key ใหม่สำหรับสร้าง Magic redeem link
-- ค้นหาคอมเมนต์คำว่า TODO: และแก้ไข Option ต่างๆ ทุกจุดที่ปรากฎ
+- แก้ไข option ต่างๆ ครบถ้วน โดยค้นหาคอมเมนต์คำว่า TODO: และแก้ไข Option ต่างๆ ทุกจุดที่ปรากฎ
