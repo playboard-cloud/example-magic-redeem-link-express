@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>Sample Ticket Platform</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <h1>Welcome </h1>
+    <p>
+      Click the following link or button below to watch your rerun content.
+    </p>
+    <p>
+      <a href="/redeem">Watch your content</a>
+      <span>Or</span>
+      <button type="" onclick="redeemViaApi()">Watch your content(via API)</button>
+    </p>
+    <script>
+      // Note: This is a simple example of how to use fetch to make a request to the server
+      // In reality, please check the browser compatibility and consider using a polyfill.
+      function redeemViaApi() {
+        fetch('/api/redeem')
+          .then(function(response) {
+            return response.json()
+          })
+          .then(function(data) {
+            window.location = data.url;
+          });
+      }
+    </script>
+  </body>
+</html>
