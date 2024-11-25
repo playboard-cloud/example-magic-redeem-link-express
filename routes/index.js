@@ -1,10 +1,17 @@
 const express = require('express');
-const { createPlayboardRedeemUrl } = require('./lib/playboard-integration');
+const { createPlayboardMagicRedeemLinkUrl } = require('./lib/playboard-integration');
 
 const router = express.Router();
 
-async function ensureUserAuthorized(req) {
-  return true;
+async function ensureUserAuthorizedAndMakeMagicRedeemLinkParams(req, eventId) {
+  return {
+    // TODO: Replace with user ID
+    userRefCode: 'user-123',
+    // TODO: Replace with user display name
+    userDisplayName: 'John Doe',
+    // TODO: Replace with ticket ID or event ID (to be discuss)
+    redeemCode: eventId,
+  };
 }
 
 /*
@@ -17,42 +24,21 @@ router.get('/', function(req, res, next) {
 /*
  * Choice 1: Redeem via redirect (Can't be used via API)
  */
-router.get('/redeem', async function(req, res, next) {
-  await ensureUserAuthorized(req);
-
-  const redeemUrl = await createPlayboardRedeemUrl({
-    // TODO: Replace with your service name that given from Playboard team
-    iss: 'sample-provider',
-    // TODO: Replace with user ID
-    userRefCode: 'user-123',
-    // TODO: Replace with user display name
-    userDisplayName: 'John Doe',
-    // TODO: Replace with ticket ID or event ID (to be discuss)
-    redeemCode: 'REDEEM-123',
-  });
-  res.redirect(307, redeemUrl);
+router.get('/events/:eventId/watch', async function(req, res, next) {
+  const magicRedeemLinkParams = await ensureUserAuthorizedAndMakeMagicRedeemLinkParams(req, req.params.eventId);
+  const magicRedeemLinkUrl = await createPlayboardMagicRedeemLinkUrl(magicRedeemLinkParams);
+  res.redirect(307, magicRedeemLinkUrl);
 });
 
 /*
  * Alternative of choice 1 that use callback instead of async/await
  */
 /*
-router.get('/redeem', function(req, res, next) {
-  ensureUserAuthorized(req)
-    .then(() => {
-      return createPlayboardRedeemUrl({
-        // TODO: Replace with your service name that given from Playboard team
-        iss: 'sample-provider',
-        // TODO: Replace with user ID
-        userRefCode: 'user-123',
-        // TODO: Replace with user display name
-        userDisplayName: 'John Doe',
-        // TODO: Replace with ticket ID or event ID (to be discuss)
-        redeemCode: 'REDEEM-123',
-      })
-    })
-    .then((redeemUrl) => {
-      res.redirect(307, redeemUrl);
+router.get('/events/:eventId/watch', function(req, res, next) {
+  ensureUserAuthorizedAndMakeMagicRedeemLinkParams(req, req.params.eventId)
+    .then(createPlayboardMagicRedeemLinkUrl)
+    .then((magicRedeemLinkUrl) => {
+      res.redirect(307, magicRedeemLinkUrl);
     });
 });
 */
@@ -60,21 +46,11 @@ router.get('/redeem', function(req, res, next) {
 /*
  * Choice 2: Redeem via API (Frontend have to handle redirects)
  */
-router.get('/api/redeem', async function(req, res, next) {
-  await ensureUserAuthorized(req);
-
-  const redeemUrl = await createPlayboardRedeemUrl({
-    // TODO: Replace with your service name that given from Playboard team
-    iss: 'sample-provider',
-    // TODO: Replace with user ID
-    userRefCode: 'user-123',
-    // TODO: Replace with user display name
-    userDisplayName: 'John Doe',
-    // TODO: Replace with ticket ID or event ID (to be discuss)
-    redeemCode: 'REDEEM-123',
-  });
+router.get('/api/events/:eventId/actions/create-watch-link', async function(req, res, next) {
+  const magicRedeemLinkParams = await ensureUserAuthorizedAndMakeMagicRedeemLinkParams(req, req.params.eventId);
+  const magicRedeemLinkUrl = await createPlayboardMagicRedeemLinkUrl(magicRedeemLinkParams);
   res.json({
-    url: redeemUrl
+    url: magicRedeemLinkUrl
   });
 });
 
@@ -82,23 +58,12 @@ router.get('/api/redeem', async function(req, res, next) {
  * Alternative of choice 2 that use callback instead of async/await
  */
 /*
-router.get('/api/redeem', async function(req, res, next) {
-  ensureUserAuthorized(req)
-    .then(() => {
-      return createPlayboardRedeemUrl({
-        // TODO: Replace with your service name that given from Playboard team
-        iss: 'sample-provider',
-        // TODO: Replace with user ID
-        userRefCode: 'user-123',
-        // TODO: Replace with user display name
-        userDisplayName: 'John Doe',
-        // TODO: Replace with ticket ID or event ID (to be discuss)
-        redeemCode: 'REDEEM-123',
-      })
-    })
-    .then((redeemUrl) => {
+router.get('/api/events/:eventId/actions/create-watch-link', async function(req, res, next) {
+  ensureUserAuthorizedAndMakeMagicRedeemLinkParams(req, req.params.eventId)
+    .then(createPlayboardMagicRedeemLinkUrl)
+    .then((magicRedeemLinkUrl) => {
       res.json({
-        url: redeemUrl
+        url: magicRedeemLinkUrl
       });
     });
 });

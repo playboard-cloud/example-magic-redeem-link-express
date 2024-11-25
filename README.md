@@ -50,16 +50,15 @@ npm run start
 
 - `routes/lib/playboard-integration.js` สามารถคัดลอกไปใช้ได้เลย
 - `routes/index.js` จะมี route ที่เกี่ยวข้องที่ให้เลือกเอาไปใช้ อย่างใดอย่างหนึ่ง (และต้องแก้ไขข้อมูลตามการใช้งานจริง) คือ
-    - `/redeem` สำหรับลิงก์เข้าชม ที่ผู้ใช้กดได้โดยตรงด้วยแท็ก `<a>` เมื่อเข้าแล้วผู้ใช้จะถูก redirect ไปตาม Magic redeem link ที่ถูกสร้างขึ้น
-    - `/api/redeem` สำหรับสร้าง Magic redeem link และส่งให้กับ Frontend ทาง API จากนั้นให้ทาง Frontend ทำการ Redirect เอง
+    - `/events/:eventId/watch` สำหรับลิงก์เข้าชม ที่ผู้ใช้กดได้โดยตรงด้วยแท็ก `<a>` เมื่อเข้าแล้วผู้ใช้จะถูก redirect ไปตาม Magic redeem link ที่ถูกสร้างขึ้น
+    - `/api/events/:eventId/actions/create-watch-link` สำหรับสร้าง Magic redeem link และส่งให้กับ Frontend ทาง API จากนั้นให้ทาง Frontend ทำการ Redirect เอง
 
 เมื่อนำโค้ดทั้งสองส่วนไปประกอบในแอปพลิเคชันของท่านแล้ว พิจารณาแก้ไข Option ตามด้านล่าง
 
 ## Option ที่ใช้ในการสร้าง Magic redeem link
 
-ใน API `/redeem` และ `/api/redeem` จะมีออปชันต่อไปนี้ ซึ่งต้องแก้ไขให้เข้ากับแอปพลิเคชันของท่าน
+ใน API ทั้งสองตัว จะมีการเรียกใช้ฟังก์ชันซึ่งมีออปชันต่อไปนี้ ซึ่งต้องแก้ไขให้เข้ากับแอปพลิเคชันของท่าน
 
-- `iss` (issuer) ระบุชื่อ service ของท่านเอง ซึ่งท่านจะได้รับจากการติดต่อกับทางทีม Playboard
 - `userRefCode` ระบุ User ID ของผู้ใช้ ใน service ของท่านเอง ที่จะได้รับชม
 - `userDisplayName` ระบุ Display Name ของผู้ใช้ ใน service ของท่านเอง ที่จะได้รับชม
 - `redeemCode` ระบุ Redeem Code สำหรับระบุคอนเทนต์ที่ผู้ใช้จะได้รับชม โดยท่านอาจใช้ Event ID, Ticket ID หรือ ID ที่อ้างอิงต่อสิ่งที่ผู้ใช้ได้ซื้อไว้ และกรอก ID เดียวกันนี้ที่หน้าตั้งค่าคลาสบน Playboard ให้ตรงกัน
@@ -68,7 +67,8 @@ npm run start
 
 นอกเหนือจาก Option ข้างต้น จะมีออปชันบางส่วนภายในไฟล์ `routes/lib/playboard-integration.js` ที่ท่านต้องแก้ไข ดังต่อไปนี้
 
-- `magicLinkPrivateKeyPath` ระบุพาธของไฟล์ Private key แบบ ECDSA 256 bit สำหรับสร้าง Magic redeem link
+- `magicRedeemLinkPrivateKeyPath` ระบุพาธของไฟล์ Private key แบบ ECDSA 256 bit สำหรับสร้าง Magic redeem link
+- `magicRedeemLinkBaseUrl` ระบุ URL ส่วนต้นของ Magic Redeem Link ที่ได้จากทาง Playboard
 
 ## การสร้าง Private key สำหรับสร้าง Magic redeem link
 

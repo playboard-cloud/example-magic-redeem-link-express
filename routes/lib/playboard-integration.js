@@ -1,14 +1,16 @@
 const fs = require('fs/promises');
 const { createSigner } = require('fast-jwt');
 const assert = require('assert');
+const { options } = require('..');
 
-const magicLinkOptions = {
+const magicRedeemLinkOptions = {
   // Private key used to sign the token
   // TODO: Change this path to your own private key
-  magicLinkPrivateKeyPath: './resources/es-256-private.key',
-  magicLinkPrivateKeyAlgorithm: 'ES256',
-  magicLinkBaseUrl: 'https://www.playboard.cloud/magic-redeem',
-  magicLinkAgeInMs: 60000,
+  magicRedeemLinkPrivateKeyPath: './resources/es-256-private.key',
+  magicRedeemLinkPrivateKeyAlgorithm: 'ES256',
+  // TODO: Replace with the link you got from Playboard team
+  magicRedeemLinkBaseUrl: 'https://www.playboard.cloud/sample-service/magic-redeem',
+  magicRedeemLinkAgeInMs: 60000,
 }
 
 let signTokenInitialized = false;
@@ -21,26 +23,24 @@ function ensureSignTokenInitialized() {
     return;
   }
 
-  assert(magicLinkOptions.magicLinkPrivateKeyPath, 'magicLinkPrivateKeyPath is required');
-  assert(magicLinkOptions.magicLinkPrivateKeyAlgorithm, 'magicLmagicLinkPrivateKeyAlgorithminkPrivateKeyPath is required');
-  assert(magicLinkOptions.magicLinkBaseUrl, 'magicLinkBaseUrl is required');
-  assert(magicLinkOptions.magicLinkAgeInMs, 'magicLinkAgeInMs is required');
+  assert(magicRedeemLinkOptions.magicRedeemLinkPrivateKeyPath, 'magicRedeemLinkPrivateKeyPath is required');
+  assert(magicRedeemLinkOptions.magicRedeemLinkPrivateKeyAlgorithm, 'magicRedeemLinkPrivateKeyAlgorithm is required');
+  assert(magicRedeemLinkOptions.magicRedeemLinkBaseUrl, 'magicRedeemLinkBaseUrl is required');
+  assert(magicRedeemLinkOptions.magicRedeemLinkAgeInMs, 'magicRedeemLinkAgeInMs is required');
 
   signToken = createSigner({
-    key: async () => fs.readFile(magicLinkOptions.magicLinkPrivateKeyPath),
-    algorithm: magicLinkOptions.magicLinkPrivateKeyAlgorithm,
-    expiresIn: magicLinkOptions.magicLinkAgeInMs,
+    key: async () => fs.readFile(magicRedeemLinkOptions.magicRedeemLinkPrivateKeyPath),
+    algorithm: magicRedeemLinkOptions.magicRedeemLinkPrivateKeyAlgorithm,
+    expiresIn: magicRedeemLinkOptions.magicRedeemLinkAgeInMs,
   });
 }
 
-async function createPlayboardRedeemToken(params = {}) {
-  assert(params.iss, 'iss (3rd-party service name) is required');
+async function createPlayboardMagicRedeemToken(params = {}) {
   assert(params.userRefCode, 'userRefCode is required');
   assert(params.userDisplayName, 'userDisplayName is required');
   assert(params.redeemCode, 'redeemCode is required');
 
   const token = await signToken({
-    iss: params.iss,
     userRefCode: params.userRefCode,
     userDisplayName: params.userDisplayName,
     redeemCode: params.redeemCode,
@@ -49,13 +49,13 @@ async function createPlayboardRedeemToken(params = {}) {
   return token;
 };
 
-async function createPlayboardRedeemUrl(params = {}) {
+async function createPlayboardMagicRedeemLinkUrl(params = {}) {
   ensureSignTokenInitialized();
 
-  const token = await createPlayboardRedeemToken(params);
-  return `${magicLinkOptions.magicLinkBaseUrl}?token=${token}`;
+  const token = await createPlayboardMagicRedeemToken(params);
+  return `${magicRedeemLinkOptions.magicRedeemLinkBaseUrl}?token=${token}`;
 }
 
 module.exports = {
-  createPlayboardRedeemUrl,
+  createPlayboardMagicRedeemLinkUrl,
 };
