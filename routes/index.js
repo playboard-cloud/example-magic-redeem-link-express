@@ -14,7 +14,7 @@ async function ensureUserAuthorizedAndMakeMagicRedeemLinkParams(req, eventId) {
     // TODO: Send user properties for video analytics
     userMeta: {
       // TODO: Replace with user gender
-      gender: "male",
+      gender: 'male',
       // TODO: Replace with user age
       age: 24,
       // TODO: Replace with user city
