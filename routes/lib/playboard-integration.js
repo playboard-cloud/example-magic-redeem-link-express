@@ -44,6 +44,12 @@ async function createPlayboardMagicRedeemToken(params = {}) {
     userRefCode: params.userRefCode,
     userDisplayName: params.userDisplayName,
     redeemCode: params.redeemCode,
+    userMeta: {
+      ...params.userMeta
+    },
+    customMeta: {
+      ...params.customMeta
+    }
   });
 
   return token;
