@@ -11,6 +11,24 @@ async function ensureUserAuthorizedAndMakeMagicRedeemLinkParams(req, eventId) {
     userDisplayName: 'John Doe',
     // TODO: Replace with ticket ID or event ID (to be discuss)
     redeemCode: eventId,
+    // TODO: Send user properties for video analytics
+    userMeta: {
+      // TODO: Replace with user gender
+      gender: 'male',
+      // TODO: Replace with user age
+      age: 24,
+      // TODO: Replace with user city
+      city: 'Bangkok',
+      // TODO: Replace with user country
+      country: 'Thailand',
+      // TODO: Replace with ticket type
+      subscriptionPlan: 'Early Bird'
+    },
+    // TODO: Send custom dimension for video analytics 
+    customMeta: {
+      // TODO: Replace with event ID
+      d1: eventId
+    }    
   };
 }
 
